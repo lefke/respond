@@ -469,6 +469,66 @@ respond.editor.setupPersistentEvents = function(){
 	// make blocks sortable
 	setupSortable();
 	
+	
+	// handle link clicks
+	$(el).on('click', '[contentEditable=true] a', function(){
+		
+		// save the selection
+		respond.text.link.selection = utilities.saveSelection();
+		respond.text.link.element = null;
+
+		// defaults
+		var url = '';
+		var cssClass = '';
+		var target = '';
+		var title = '';
+		var hasLightbox = false;
+
+		// get link from selected text
+		var link = utilities.getLinkFromSelection();
+		
+		respond.text.link.element = link;
+		
+		// set link detail if available
+		if(link != null){
+			url = $(link).attr('ui-sref');
+			
+			if(url == undefined){
+				url = $(link).attr('href');
+			}
+			
+			cssClass = link.className;
+			target = link.target;
+			title = link.title;
+			
+			if($(link).attr('respond-lightbox') != undefined){
+				hasLightbox = true;
+			}
+		}
+		
+
+	    $('#linkUrl').val(url);
+	    $('#linkCssClass').val(cssClass);
+	    $('#linkTarget').val(target);
+	    $('#linkTitle').val(title);
+	    $('#pageUrl li').removeClass('selected');
+	    $('#existing').attr('checked','checked');
+	    
+	    $('#linkLightbox').prop('checked', hasLightbox);
+	    
+	    // update pages
+    	var scope = angular.element($("section.main")).scope();
+		
+		scope.retrievePages();
+		scope.updateFiles();
+
+		// show modal
+		$('#linkDialog').modal('show');
+		
+		return false;
+	});
+	
+	
 	// set respond.editor.currNode when div is focused
 	$(el).on('click focusin', '.sortable>div', function(){
 		respond.editor.currNode = this;
@@ -665,7 +725,7 @@ respond.editor.setupPersistentEvents = function(){
 			cssClass = ' .block.row';
 		}
 		
-		$(clone).find('.block-actions span').texi18n.t('#'+blockid+cssClass);
+		$(clone).find('.block-actions span').text('#'+blockid+cssClass);
 		
 		// find all blocks in clone
 		var blocks = $(clone).find('.col>div');
@@ -1114,7 +1174,39 @@ respond.editor.build = function(){
 	respond.editor.setupPlugins();
 	
 	// detect any changes
-	$(el).bind("DOMSubtreeModified", function() {
+	$(el).on('keyup', '[contentEditable=true]', function() {
+	    
+	    // set scope
+  		var scope = angular.element($("section.main")).scope();
+  		
+  		// set modified
+  		scope.setModified();
+	    
+	});
+	
+	$('.editor-actions a').on('mousedown', function() {
+	    
+	    // set scope
+  		var scope = angular.element($("section.main")).scope();
+  		
+  		// set modified
+  		scope.setModified();
+	    
+	});
+	
+	// detect any changes
+	$('#context-menu input').on('keyup', function() {
+	    
+	    // set scope
+  		var scope = angular.element($("section.main")).scope();
+  		
+  		// set modified
+  		scope.setModified();
+	    
+	});
+	
+	// detect any changes
+	$('#context-menu select').on('change', function() {
 	    
 	    // set scope
   		var scope = angular.element($("section.main")).scope();

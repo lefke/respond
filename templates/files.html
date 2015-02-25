@@ -25,7 +25,7 @@
     
     <div id="drop" 
     	ng-if="totalSize <= fileLimit"
-    	class="dropzone dark fixed" drop-zone target="files" filename="{{temp.filename}}" callback="updateFiles()" folder="{{folder}}">
+    	class="dropzone dark" drop-zone target="files" filename="{{temp.filename}}" callback="updateFiles()" folder="{{folder}}">
         <span class="dz-message">
             <i class="fa fa-cloud-upload fa-4x"></i> {{'Drag file here or click to upload' | i18next}} &ndash;
             	<span ng-show="folder == 'files'">{{'Files' | i18next}}</span>
@@ -34,16 +34,12 @@
         </span>
     </div>
     
-    <div class="list has-dropzone">
+    <div class="list">
     
         <div class="listItem" 
         	ng-repeat="file in files"
         	ng-class="{'has-thumb': (file.isImage == true)}">
-        
-			<!--
-        	<a class="edit" 
-        		ng-click="edit(file, $event)"><i class="fa fa-pencil fa-lg"></i></a> -->
-        		
+     	
     		<a class="remove" 
     			ng-click="showRemove(file)"><i class="fa fa-minus"></i></a>
     			
@@ -91,7 +87,7 @@
 			<div class="modal-body">
 			
 				<p>
-					{{'Confirm you want to remove:' | i18next}} <strong>{{temp.filename}}</strong>
+					{{'Confirm you want to remove' | i18next}} <strong>{{temp.filename}}</strong>
 				</p>
 				
 				<p>

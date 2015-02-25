@@ -102,18 +102,20 @@ class Publish
 	
 		if($site['UrlMode'] == 'html5'){
 			
-			$contents = 'RewriteEngine On'.PHP_EOL.
-							'RewriteCond %{REQUEST_FILENAME} !-f'.PHP_EOL.
-							'RewriteCond %{REQUEST_FILENAME} !-d'.PHP_EOL.
-							'RewriteCond %{REQUEST_URI} !.*\.(css¦js|html|png)'.PHP_EOL.
-							'RewriteRule (.*) index.html [L]';
+			$contents = 'Options -Indexes'.PHP_EOL.
+				'RewriteEngine On'.PHP_EOL.
+				'RewriteCond %{REQUEST_FILENAME} !-f'.PHP_EOL.
+				'RewriteCond %{REQUEST_FILENAME} !-d'.PHP_EOL.
+				'RewriteCond %{REQUEST_URI} !.*\.(css¦js|html|png)'.PHP_EOL.
+				'RewriteRule (.*) index.html [L]';
 			
 
 			file_put_contents($htaccess, $contents); // save to file			
 		}
 		else if($site['UrlMode'] == 'static'){
 						
-			$contents = '<IfModule mod_rewrite.c>'.PHP_EOL.
+			$contents = 'Options -Indexes'.PHP_EOL.
+				'<IfModule mod_rewrite.c>'.PHP_EOL.
 				'RewriteEngine On'.PHP_EOL.
 				'RewriteCond %{REQUEST_FILENAME} !-f'.PHP_EOL.
 				'RewriteRule ^([^\.]+)$ $1.html [NC,L]'.PHP_EOL.
@@ -350,8 +352,6 @@ class Publish
 		if(FILES_ON_S3 == true){  // copy files to S3
 		
 			$files_src = APP_LOCATION.THEMES_FOLDER.'/'.$theme.'/files';
-			
-			echo '$files_src='.$files_src;
 			
 			// deploy directory to S3
 			S3::DeployDirectory($site, $files_src, 'files/');
@@ -1010,8 +1010,6 @@ class Publish
 		// walk through types
 		foreach($types as $type){
 		
-			echo $type['FriendlyId'];
-		
 			// get items for type
 			$list = MenuItem::GetMenuItemsForType($site['SiteId'], $type['FriendlyId']);
 			
@@ -1079,8 +1077,6 @@ class Publish
 			$encoded = json_encode($menu);
 	
 			$dest = SITES_LOCATION.'/'.$site['FriendlyId'].'/data/';
-			
-			echo $dest.'menu-'.$type['FriendlyId'].'.json';
 			
 			Utilities::SaveContent($dest, 'menu-'.$type['FriendlyId'].'.json', $encoded);
 		}
