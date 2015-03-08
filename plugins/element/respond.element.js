@@ -1475,6 +1475,9 @@ respond.element.image = {
 	
 	// parse image
 	parse:function(node){
+		
+		console.log('respond-image');
+		console.log(node);
 	
 		// get scope from page
 		var scope = angular.element($("section.main")).scope();
@@ -1484,16 +1487,24 @@ respond.element.image = {
 	
 		// get params
 		var isExternal = false;
-		var id = $(node).attr('id');		
-		var src = $(node).find('img').attr('ng-src');
+		var id = $(node).attr('id');
+		
+		// get src
+		var src = $(node).find('img').attr('src');
+		
+		// compatibility for ng-src (deprecated)
+		if($(node).find('img').attr('ng-src') != '' && $(node).find('img').attr('ng-src') != undefined){
+			src =  $(node).find('img').attr('ng-src');
+		}
+		
+		var location = $(node).find('img').attr('data-location') || '';
 		var link = $(node).find('a').attr('href') || $(node).find('a').attr('ui-sref') || '';
 		var title = $(node).find('a').attr('title') || '';
 		var target = $(node).find('a').attr('target') || '';
 		var lightbox = '0';
 		
 		// get external image
-		if(src == undefined){
-			src = $(node).find('img').attr('src');
+		if(location == 'external'){
 			isExternal = true;
 		}
 		
@@ -1512,7 +1523,6 @@ respond.element.image = {
 		
 		// replace the images URL with the URL from the site
 		src = utilities.replaceAll(src, '{{site.ImagesUrl}}', url);
-		src = utilities.replaceAll(src, '{{site.ImagesURL}}', url);
 		
 		// get display class
 		var display = $(node).attr('data-display') || 'left';
@@ -1612,12 +1622,12 @@ respond.element.image = {
 	  		}
 	  		
 	  		// set image tag
-	  		img = '<img ng-src="{{site.ImagesUrl}}' + src + '">';
+	  		img = '<img src="{{site.ImagesUrl}}' + src + '" data-location="local">';
 	  		
 	  	}
 	  	else{
 		  	// set image tag
-	  		img = '<img src="' + src + '">'; 	
+	  		img = '<img src="' + src + '" data-location="external">'; 	
 	  	}
   		
   		var html = startLink + img + endLink;
@@ -1731,7 +1741,6 @@ respond.element.pre = {
 		attrs['class'] = $(node).attr('data-cssclass');
 		attrs['description'] = $(node).attr('data-description');
 		attrs['respond-pre'] = 'true';
-		attrs['ng-non-bindable'] = 'true';
 		
 		var code = $(node).find('textarea').val();
 		code = utilities.replaceAll(code, '<', '&lt;');
