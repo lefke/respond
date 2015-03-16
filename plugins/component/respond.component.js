@@ -122,7 +122,12 @@ respond.component.slideshow = {
 	parse:function(node){
 	
 		// get params
-		var id = $(node).attr('id');
+		var id = $(node).attr('slideshowid');
+		
+		// get old formid
+		if(id == undefined){
+			id = $(node).attr('id');
+		}
 		
 		// build html
 		var html = respond.editor.defaults.elementMenu +
@@ -219,7 +224,7 @@ respond.component.slideshow = {
   		
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = $(node).attr('data-id');
+		attrs['slideshowid'] = $(node).attr('data-id');
 		attrs['class'] = $(node).attr('data-cssclass');
 		attrs['indicators'] = $(node).attr('data-indicators');
 		attrs['arrows'] = $(node).attr('data-arrows');
@@ -246,9 +251,6 @@ respond.component.map = {
 	// creates map
 	create:function(){
 	
-		// generate uniqId
-		var id = respond.editor.generateUniqId('map', 'map');
-		
 		// build html
 		var html = respond.editor.defaults.elementMenu +
 					'<i class="in-textbox fa fa-map-marker"></i>' +
@@ -256,8 +258,6 @@ respond.component.map = {
 					
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = id;
-		attrs['data-id'] = id;
 		attrs['class'] = 'respond-map';
 		attrs['data-cssclass'] = '';
 		attrs['data-zoom'] = 'auto';
@@ -286,8 +286,6 @@ respond.component.map = {
 					
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = id;
-		attrs['data-id'] = id;
 		attrs['class'] = 'respond-map';
 		attrs['data-cssclass'] = $(node).attr('class');
 		attrs['data-zoom'] = $(node).attr('zoom');
@@ -302,8 +300,6 @@ respond.component.map = {
 
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = $(node).attr('data-id');
-		attrs['class'] = $(node).attr('data-cssclass');
 		attrs['address'] = $(node).find('input').val();
 		attrs['zoom'] = $(node).attr('data-zoom');
 		
@@ -391,7 +387,7 @@ respond.component.form = {
 
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = id;
+		attrs['fieldid'] = id;
 		attrs['type'] = type;
 		attrs['label'] = label;
 		attrs['required'] = required;
@@ -443,7 +439,12 @@ respond.component.form = {
 	parse:function(node){
 	
 		// get params
-		var id = $(node).attr('id');
+		var id = $(node).attr('formid');
+		
+		// get old formid
+		if(id == undefined){
+			id = $(node).attr('id');
+		}
 		
 		// build html
 		var html = respond.editor.defaults.elementMenu + '<div class="field-list">';
@@ -457,7 +458,6 @@ respond.component.form = {
 			var type = $(fields[y]).attr('data-type');
 			
 			if(type != null){
-					
 				
 				// get attributes
 				var fieldLabel = $(fields[y]).attr('data-label') || '';
@@ -485,12 +485,25 @@ respond.component.form = {
 			
 			if(type != null){
 				
+				var required = $(fields[y]).get(0).getAttribute('required');
+				
+				if(required == 'required'){
+					required = 'false';
+				}
+				
+				// get params
+				var fieldId = $(fields[y]).attr('fieldid');
+				
+				// get old fieldid
+				if(fieldId == undefined){
+					fieldId = $(fields[y]).attr('id') || '';
+				}
+				
 				// get attributes
 				var fieldLabel = $(fields[y]).attr('label') || '';
-				var fieldRequired = $(fields[y]).attr('required') || '';
+				var fieldRequired = required;
 				var fieldHelper = $(fields[y]).attr('helper') || '';
 				var fieldPlaceholder = $(fields[y]).attr('placeholder') || '';
-				var fieldId = $(fields[y]).attr('id') || '';
 				var fieldCssClass = $(fields[y]).attr('cssclass') || '';
 				var fieldOptions = $(fields[y]).attr('options') || '';
 				
@@ -537,14 +550,14 @@ respond.component.form = {
   				field.attr('data-helper') || '', 
   				field.attr('data-placeholder') || '', 
   				field.attr('data-cssclass') || '', 
-  				field.attr('data-options') || '');  				
+  				field.attr('data-options') || '');  			
   		}
   		
   		html += '';
   		
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = $(node).attr('data-id');
+		attrs['formid'] = $(node).attr('data-id');
 		attrs['class'] = $(node).attr('data-cssclass');
 		attrs['type'] = $(node).attr('data-type');
 		attrs['action'] = $(node).attr('data-action');
@@ -642,17 +655,12 @@ respond.component.list = {
 	// creates list
 	create:function(){
 	
-		// generate uniqId
-		var id = respond.editor.generateUniqId('list', 'list');
-		
 		// build html
 		var html = respond.editor.defaults.elementMenu +
 					'<div class="title respond-element"><i class="fa fa-cubes"></i> <span node-text="type">Not Selected</span></div>';		
 					
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = id;
-		attrs['data-id'] = id;
 		attrs['class'] = 'respond-list';
 		attrs['data-cssclass'] = '';
 		attrs['data-type'] = '';
@@ -676,7 +684,6 @@ respond.component.list = {
 	parse:function(node){
 		
 		// get params
-		var id = $(node).attr('id');
 		var type = $(node).attr('type');
 		
 		// build html
@@ -685,8 +692,6 @@ respond.component.list = {
 		
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = id;
-		attrs['data-id'] = id;
 		attrs['class'] = 'respond-list';
 		attrs['data-cssclass'] = $(node).attr('class');
 		attrs['data-type'] = $(node).attr('type');
@@ -709,7 +714,6 @@ respond.component.list = {
 
 		// tag attributes
 		var attrs = [];
-		attrs['id'] = $(node).attr('data-id');
 		attrs['class'] = $(node).attr('data-cssclass');
 		attrs['type'] = $(node).attr('data-type');
 		attrs['display'] = $(node).attr('data-display');

@@ -1,4 +1,4 @@
-<polymer-element name="respond-form-field" attributes="id type label required helper placeholder cssclass options">
+<polymer-element name="respond-form-field" attributes="fieldid type label required helper placeholder cssclass options">
   <template>
   	<content></content>
   </template>
@@ -22,15 +22,16 @@
 		var html = '';
 		
 		// set label
-		var html = '<label for="' + this.id + '"'; 
+		var html = '<label for="' + this.fieldid + '"'; 
 		var prefix = '';
-		
-		if(this.id != null){
+		var pageId = document.body.getAttribute('page');
+	
+		if(this.fieldid != null){
 
 			// get pageId
-			prefix = respond.site.settings.PageId + '.';
+			prefix = pageId + '.';
 		
-			html += 'id="' + this.id + '-label" data-i18n="' + prefix + this.id + '-label">';
+			html += 'id="' + this.fieldid + '-label" class="control-label" data-i18n="' + prefix + this.fieldid + '-label">';
 		}
 		else{
 			html += '>';
@@ -46,20 +47,20 @@
 
 		// create textbox
 		if(this.type=='text'){
-			html += '<input id="' + this.id + '" name="' + this.id + 
+			html += '<input id="' + this.fieldid + '" name="' + this.fieldid + 
 					'" type="text" class="form-control" placeholder="'+this.placeholder+'"' + req +
 					'>';
 		}
 
 		// create textarea
 		if(this.type=='textarea'){
-			html += '<textarea id="' + this.id + '" name="' + this.id + '" class="form-control"' + req + 
+			html += '<textarea id="' + this.fieldid + '" name="' + this.fieldid + '" class="form-control"' + req + 
 					'></textarea>';
 		}
 
 		// create select
 		if(this.type=='select'){
-			html += '<select id="' + this.id + '" name="' + this.id + '" class="form-control"' + req + 
+			html += '<select id="' + this.fieldid + '" name="' + this.fieldid + '" class="form-control"' + req + 
 			'>';
 
 			var arr = options.split(',');
@@ -67,10 +68,10 @@
 			for(x=0; x<arr.length; x++){
 			
 				if(id != null){
-					html += '<option id="' + this.id + '-option' + (x+1) + '" data-i18n="' + prefix + this.id + '-option' + (x+1) + '">' + $.trim(arr[x]) + '</option>';
+					html += '<option id="' + this.fieldid + '-option' + (x+1) + '" data-i18n="' + prefix + this.fieldid + '-option' + (x+1) + '">' + arr[x].trim() + '</option>';
 				}
 				else{
-	  				html += '<option>' + $.trim(arr[x]) + '</option>';
+	  				html += '<option>' + arr[x].trim() + '</option>';
 	  			}
 			}
 
@@ -85,18 +86,18 @@
 
 			for(x=0; x<arr.length; x++){
 				
-				var val = $.trim(arr[x]);
+				var val = arr[x].trim();
 			
-	  			html += '<label class="checkbox"><input name="' + this.id + '" type="checkbox" value="' + $.trim(arr[x]) + '">';
+	  			html += '<label class="checkbox"><input name="' + this.fieldid + '" type="checkbox" value="' + arr[x].trim() + '">';
 	  			
-	  			if(this.id != null){
-		  			html += '<span id="' + this.id + '-checkbox' + (x+1) + '" data-i18n="' + prefix + this.id + '-checkbox' + (x+1) + '">';
+	  			if(this.fieldid != null){
+		  			html += '<span id="' + this.fieldid + '-checkbox' + (x+1) + '" data-i18n="' + prefix + this.fieldid + '-checkbox' + (x+1) + '">';
 				}
 				else{
 					html += '<span>';
 				}
 	  				
-	  			html += $.trim(arr[x]) + '</span></label>';
+	  			html += arr[x].trim() + '</span></label>';
 			}
 
 			html += '</span>';
@@ -109,16 +110,16 @@
 			var arr = options.split(',');
 
 			for(x=0; x<arr.length; x++){
-	  			html += '<label class="radio"><input name="' + this.id + '" type="radio" value="' + $.trim(arr[x]) + '" name="' + id + '">';
+	  			html += '<label class="radio"><input name="' + this.fieldid + '" type="radio" value="' + arr[x].trim() + '" name="' + id + '">';
 	  			
-	  			if(this.id != null){
-		  			html += '<span id="' + this.id + '-radio' + (x+1) + '" data-i18n="' + prefix + this.id + '-radio' + (x+1) + '">';
+	  			if(this.fieldid != null){
+		  			html += '<span id="' + this.fieldid + '-radio' + (x+1) + '" data-i18n="' + prefix + this.fieldid + '-radio' + (x+1) + '">';
 				}
 				else{
 					html += '<span>';
 				}
 	  				
-	  			html += $.trim(arr[x]) + '</span></label>';
+	  			html += arr[x].trim() + '</span></label>';
 			}
 
 			html += '</span>';
@@ -127,8 +128,8 @@
 		// create helper
 		if(this.helper != '') {
 		
-			if(this.id != null){
-	  			html += '<span id="' + this.id + '-help" data-i18n="' + prefix + this.id + '-help" class="help-block">' + this.helper + '</span>';
+			if(this.fieldid != null){
+	  			html += '<span id="' + this.fieldid + '-help" data-i18n="' + prefix + this.fieldid + '-help" class="help-block">' + this.helper + '</span>';
 			}
 			else{
 				html += '<span class="help-block">' + this.helper + '</span>';
@@ -137,7 +138,7 @@
 		}
 		
 		// update light DOM		
-		this.innerHTML = '<div data-id="' + this.id + 
+		this.innerHTML = '<div data-id="' + this.fieldid + 
 							'" data-label="' + this.label +
 							'" data-type="' + this.type + 
 							'" data-required="' + this.required + 

@@ -1,4 +1,4 @@
-<polymer-element name="respond-form" attributes="type action success error submit">
+<polymer-element name="respond-form" attributes="formid type action success error submit">
   <template>
     <style>
 		button{
@@ -41,7 +41,7 @@
     </style>
     
     <div id="container">
-    	<form id="form">
+    	<form id="{{formid}}">
     		<content id="content"></content>
     	</form>
     </div>
@@ -55,7 +55,7 @@
 	
 	<template if="{{showSuccess == true}}">
 	<span class="success">
-		{{success}}
+		{{success | i18n}}
 	</span>
 	</template>
 	
@@ -110,6 +110,7 @@
 		// add page and site
 		params['pageId'] = pageId;
 		params['siteId'] = siteId;
+		params['formId'] = this.formid;
 		
 		// walk through inputs
 		for(x=0; x<groups.length; x++){
@@ -155,9 +156,10 @@
 			
 			params[id] = value;
 			
-			// check requiref fields
+			// check required fields
 			if(required == 'true' && value == ''){
 				this.showError = true;
+				groups[x].className += ' has-error';
 			}
 			
 		}
@@ -174,27 +176,77 @@
 		var context = this;
 		
 		// submit form
-		$.post(api + '/form', $.param(params), function(){
-			context.loading = false;
-			context.showSuccess = true;
-			
-			// clear the form after submit
-			context.clearForm();
-		});
+		var xhr = new XMLHttpRequest();
+		
+		// set URI
+		var uri = api + '/form';
+		
+		xhr.open('POST', encodeURI(uri));
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.onload = function() {
+		    if(xhr.status === 200){
+		    	// clear form, hide loading
+		    	context.loading = false;
+		    	context.showSuccess = true;
+		    	context.clearForm();
+		    }
+		    else if(xhr.status !== 200){
+		    	context.loading = false;
+		        console.log('[respond.error] respond-form component: failed post, xhr.status='+xhr.status);
+		    }
+		};
+		
+		// serialize the data
+	    var qs = [];
+	    
+	    for(p in params){
+		    qs.push(encodeURIComponent(p) + "=" + encodeURIComponent(params[p]));
+	    }
+	    
+	    qs = qs.join("&");
+	    
+		// send serialized data
+		xhr.send(encodeURI(qs));
 		
 	},
 	
 	// clears the form on submit
 	clearForm:function(){
 	
-		// query light DOM in the container
-		var container = this;
+		// clear text fields
+		var els = this.querySelectorAll('input[type=text]');
 		
-		// select all inputs in the light DOM
-		$(container).find('input[type=text]').val('');
-		$(container).find('textarea').val('');
-		$(container).find('input[type=checkbox]').attr('checked', '');
-		$(container).find('input[type=radio]').attr('checked', '');
+		for(x=0; x<els.length; x++){
+			els[x].value = '';
+		}
+		
+		// clear text ares
+		var els = this.querySelectorAll('textarea');
+		
+		for(x=0; x<els.length; x++){
+			els[x].value = '';
+		}
+		
+		// clear checkboxes
+		var els = this.querySelectorAll('input[type=checkbox]');
+		
+		for(x=0; x<els.length; x++){
+			els[x].checked = false;
+		}
+		
+		// clear radios
+		var els = this.querySelectorAll('input[type=radio]');
+		
+		for(x=0; x<els.length; x++){
+			els[x].checked = false;
+		}
+		
+		// reset selects
+		var els = this.querySelectorAll('select');
+		
+		for(x=0; x<els.length; x++){
+			els[x].selectedIndex = 0;
+		}
 		
 	},
       
